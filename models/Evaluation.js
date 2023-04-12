@@ -7,6 +7,6 @@ const evaluationSchema = new Schema({
     answerList: [{ type: ObjectId, ref: 'Answer' }],
 }, { timestamps: true });
 
-const Evaluation = mongoose.model("Evaluation", userSchema);
+const Evaluation = mongoose.model("Evaluation", evaluationSchema);
 
 module.exports = Evaluation;

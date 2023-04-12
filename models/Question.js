@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 const questionSchema = new Schema({
-    competences : String,
-    capacites: String,
+    competences : { type: String, required: true, unique: true },
+    capacites: {type: String, required: true },
     questions: String,
 }, { timestamps: true });
 
-const Question = mongoose.model("Question", userSchema);
+const Question = mongoose.model("Question", questionSchema);
 
 module.exports = Question;

@@ -8,6 +8,6 @@ const answerSchema = new Schema({
     reponse: Number,
 }, { timestamps: true });
 
-const Answer = mongoose.model("Answer", userSchema);
+const Answer = mongoose.model("Answer", answerSchema);
 
 module.exports = Answer;

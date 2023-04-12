@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
   
 const userSchema = new Schema({
-  email: { type: String, required: true },
-  profileImg: String,
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   lastName: String,
   firstName: String,
