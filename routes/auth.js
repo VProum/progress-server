@@ -22,7 +22,7 @@ router.post("/signin", (req, res, next) => {
       }
 
       req.session.currentUser = {
-        // role: "userDocument.role",  // if you need to handle roles
+        role: "userDocument.role",
         _id: userDocument._id,
       };
 
@@ -32,7 +32,7 @@ router.post("/signin", (req, res, next) => {
 });
 
 router.post("/signup", (req, res, next) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { email, password, firstName, lastName, schoolClass = "", isTeacher = false } = req.body;
 
   User.findOne({ email })
     .then((userDocument) => {
@@ -41,7 +41,7 @@ router.post("/signup", (req, res, next) => {
       }
 
       const hashedPassword = bcrypt.hashSync(password, salt);
-      const newUser = { email, lastName, firstName, password: hashedPassword };
+      const newUser = { email, lastName, firstName, password: hashedPassword, schoolClass, isTeacher};
 
       User.create(newUser)
         .then(() => {

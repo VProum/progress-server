@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-// comment
+const ObjectId = Schema.Types.ObjectId;
   
 const userSchema = new Schema({
   email: { type: String, required: true },
@@ -8,8 +8,10 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   lastName: String,
   firstName: String,
-  phoneNumber: String,
-});
+  schoolClass: String,
+  isTeacher: Boolean,
+  evaluationList: [{type: ObjectId, ref: 'Evaluation'}],
+}, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
 
