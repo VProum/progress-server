@@ -10,7 +10,7 @@ router.post("/newquestion", (req, res, next) => {
       if (questDoc) {
         return res.status(400).json({ message: "Competences already taken" });
       }
-      const newQuestion = {competences, capacites, questions};
+      const newQuestion = { competences, capacites, questions };
 
       Question.create(newQuestion)
         .then(() => {
