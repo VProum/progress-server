@@ -58,6 +58,28 @@ router.post("/signup", (req, res, next) => {
 
       User.create(newUser)
         .then(() => {
+          User.findOne({ email: newUser.email })
+            .then((userDocument) => {
+              if (!userDocument) {
+                return res.status(400).json({ message: "Invalid credentials" });
+              }
+
+              const isValidPassword = bcrypt.compareSync(
+                password,
+                userDocument.password
+              );
+              if (!isValidPassword) {
+                return res.status(400).json({ message: "Invalid credentials" });
+              }
+
+              req.session.currentUser = {
+                isTeacher: userDocument.isTeacher,
+                _id: userDocument._id,
+              };
+
+              res.redirect("/api/users/me");
+            })
+            .catch(next);
           res.sendStatus(201);
         })
         .catch(next);

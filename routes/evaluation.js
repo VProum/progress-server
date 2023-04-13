@@ -3,6 +3,7 @@ const router = express.Router();
 const Evaluation = require("../models/Evaluation");
 const Answer = require("../models/Answer");
 const checkTeacher = require("../middlewares/checkTeacher");
+const requireAuth = require("../middlewares/requireAuth");
 
 router.post("/newevaluation", async (req, res, next) => {
   const answerArray = JSON.parse(req.body.answerList);
