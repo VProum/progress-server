@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Answer = require("../models/Question");
-const checkTeacher = require("../middleware/checkTeacher");
+const checkTeacher = require("../middlewares/checkTeacher");
 
 //Create a new answer
 router.post("/newanswer", (req, res, next) => {
