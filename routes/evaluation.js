@@ -50,6 +50,23 @@ router.get("/allevaluation", requireAuth, (req, res, next) => {
     .catch(next);
 });
 
+//fetch one eval for one student
+router.get("/:id", requireAuth, (req, res, next) => {
+  Evaluation.findById(req.param.id)
+    .populate({
+      path: "answerList",
+      populate: { path: "questionId" },
+    })
+    .then((evaluation) => {
+      if (evaluation.userId === req.session.currentUser._id) {
+        res.status(200).json(evaluation);
+      } else {
+        res.status(401).json({ message: "Unauthorized - Wrong student id" });
+      }
+    })
+    .catch(next);
+});
+
 //fetch all eval for teacher
 router.get("/allevaluations", checkTeacher, (req, res, next) => {
   Evaluation.find()
