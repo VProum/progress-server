@@ -7,7 +7,7 @@ const checkTeacher = require("../middlewares/checkTeacher");
 const requireAuth = require("../middlewares/requireAuth");
 
 router.post("/newevaluation", async (req, res, next) => {
-  const answerArray = JSON.parse(req.body.answerList);
+  const answerArray = req.body;
   const answerListWithId = [];
 
   const createAnswersPromise = new Promise((res, rej) => {
@@ -39,10 +39,11 @@ router.post("/newevaluation", async (req, res, next) => {
 
 //fetch all eval for one student
 router.get("/allevaluation", requireAuth, (req, res, next) => {
-  Evaluation.find({ userId: req.session.currentUser._id }).populate({
-    path: "answerList",
-    populate: { path: "questionId" },
-  })
+  Evaluation.find({ userId: req.session.currentUser._id })
+    .populate({
+      path: "answerList",
+      populate: { path: "questionId" },
+    })
     .then((evaluations) => {
       res.status(200).json(evaluations);
     })
