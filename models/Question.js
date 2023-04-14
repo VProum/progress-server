@@ -6,6 +6,7 @@ const questionSchema = new Schema({
     competences : { type: String, required: true, unique: true },
     capacites: {type: String, required: true },
     questions: String,
+    isLive: Boolean,
 }, { timestamps: true });
 
 const Question = mongoose.model("Question", questionSchema);
