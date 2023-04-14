@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Answer = require("../models/Question");
+const Answer = require("../models/Answer");
 const checkTeacher = require("../middlewares/checkTeacher");
 
 //Create a new answer
