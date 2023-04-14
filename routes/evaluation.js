@@ -52,13 +52,21 @@ router.get("/allevaluation", requireAuth, (req, res, next) => {
 
 //fetch one eval for one student
 router.get("/:id", requireAuth, (req, res, next) => {
-  Evaluation.findById(req.param.id)
+  Evaluation.findById(req.params.id)
     .populate({
       path: "answerList",
       populate: { path: "questionId" },
     })
     .then((evaluation) => {
-      if (evaluation.userId === req.session.currentUser._id) {
+      console.log(
+        "*****************",
+        evaluation.userId,
+        req.session.currentUser._id
+      );
+
+      // res.status(200).json(evaluation);
+      if (evaluation.userId.toString() === req.session.currentUser._id) {
+        console.log("pzefij");
         res.status(200).json(evaluation);
       } else {
         res.status(401).json({ message: "Unauthorized - Wrong student id" });
