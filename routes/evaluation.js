@@ -7,7 +7,6 @@ const checkTeacher = require("../middlewares/checkTeacher");
 const requireAuth = require("../middlewares/requireAuth");
 const checkId = require("../middlewares/checkId");
 
-
 router.post("/newevaluation", async (req, res, next) => {
   const answerArray = req.body;
   const answerListWithId = [];
@@ -54,9 +53,10 @@ router.get("/allevaluation", requireAuth, (req, res, next) => {
 
 //fetch all eval for teacher
 router.get("/allevaluations", checkTeacher, (req, res, next) => {
-  Evaluation.find().populate({
-    path: "userId"
-  })
+  Evaluation.find()
+    .populate({
+      path: "userId",
+    })
     .then((evaluations) => {
       res.status(200).json(evaluations);
     })
@@ -74,6 +74,36 @@ router.get("/:id", requireAuth, checkId, (req, res, next) => {
       res.status(200).json(evaluation);
     })
     .catch(next);
+});
+
+// Update an evaluation
+
+router.post("/updateevaluation", async (req, res, next) => {
+  const evalId = req.body.id;
+  const answerArray = req.body.evaluation;
+  let counterUpdate = 0;
+
+  //update answers within the eval
+  const updateAnswersPromise = new Promise((res, rej) => {
+    answerArray.forEach(async (answer) => {
+      const answerUpdateData = {
+        repartition: answer.repartition,
+        reponse: answer.reponse,
+      };
+      const updatedAnswer = await Answer.findByIdAndUpdate(
+        answer.answerId,
+        answerUpdateData
+      );
+      counterUpdate++;
+
+      if (answerArray.length === counterUpdate) {
+        res();
+      }
+    });
+  });
+  await updateAnswersPromise;
+
+  res.status(201).json(answerArray);
 });
 
 module.exports = router;
