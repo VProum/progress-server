@@ -5,6 +5,8 @@ const Answer = require("../models/Answer");
 const User = require("../models/User");
 const checkTeacher = require("../middlewares/checkTeacher");
 const requireAuth = require("../middlewares/requireAuth");
+const checkId = require("../middlewares/checkId");
+
 
 router.post("/newevaluation", async (req, res, next) => {
   const answerArray = req.body;
@@ -50,36 +52,26 @@ router.get("/allevaluation", requireAuth, (req, res, next) => {
     .catch(next);
 });
 
+//fetch all eval for teacher
+router.get("/allevaluations", checkTeacher, (req, res, next) => {
+  Evaluation.find().populate({
+    path: "userId"
+  })
+    .then((evaluations) => {
+      res.status(200).json(evaluations);
+    })
+    .catch(next);
+});
+
 //fetch one eval for one student
-router.get("/:id", requireAuth, (req, res, next) => {
+router.get("/:id", requireAuth, checkId, (req, res, next) => {
   Evaluation.findById(req.params.id)
     .populate({
       path: "answerList",
       populate: { path: "questionId" },
     })
     .then((evaluation) => {
-      console.log(
-        "*****************",
-        evaluation.userId,
-        req.session.currentUser._id
-      );
-
-      // res.status(200).json(evaluation);
-      if (evaluation.userId.toString() === req.session.currentUser._id) {
-        console.log("pzefij");
-        res.status(200).json(evaluation);
-      } else {
-        res.status(401).json({ message: "Unauthorized - Wrong student id" });
-      }
-    })
-    .catch(next);
-});
-
-//fetch all eval for teacher
-router.get("/allevaluations", checkTeacher, (req, res, next) => {
-  Evaluation.find()
-    .then((evaluations) => {
-      res.status(200).json(evaluations);
+      res.status(200).json(evaluation);
     })
     .catch(next);
 });

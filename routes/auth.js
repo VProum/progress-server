@@ -57,8 +57,12 @@ router.post("/signup", (req, res, next) => {
       };
 
       User.create(newUser)
-        .then(() => {
-          res.sendStatus(201);
+        .then((createdUser) => {
+          req.session.currentUser = {
+            isTeacher: createdUser.isTeacher,
+            _id: createdUser._id,
+          };
+          res.redirect("/api/users/me");
         })
         .catch(next);
     })
