@@ -8,7 +8,8 @@ const requireAuth = require("../middlewares/requireAuth");
 const checkId = require("../middlewares/checkId");
 
 router.post("/newevaluation", async (req, res, next) => {
-  const answerArray = req.body;
+  const answerArray = req.body.evalFormatted;
+  const averageGrade = req.body.finalGrade;
   const answerListWithId = [];
 
   const createAnswersPromise = new Promise((res, rej) => {
@@ -33,6 +34,7 @@ router.post("/newevaluation", async (req, res, next) => {
   const newEvaluation = {
     answerList: answerListWithId,
     userId: req.session.currentUser._id,
+    globalGrade : averageGrade
   };
   const createdEvaluation = await Evaluation.create(newEvaluation);
   res.status(201).json(createdEvaluation);
@@ -76,11 +78,24 @@ router.get("/:id", requireAuth, checkId, (req, res, next) => {
     .catch(next);
 });
 
+//delete one evaluation by id, teacher only
+router.post("/deleteevaluation", requireAuth, checkTeacher, (req, res, next) => {
+  const id = req.body.id;
+  console.log("DDDDDDDDDDD////// ", id);
+  Evaluation.deleteOne({ _id: id })
+    .then((evaluation) => {
+      res.status(200).json(evaluation);
+    })
+    .catch(next);
+});
+
+
 // Update an evaluation
 
 router.post("/updateevaluation", async (req, res, next) => {
   const evalId = req.body.id;
-  const answerArray = req.body.evaluation;
+  const answerArray = req.body.evaluation.evalFormatted;
+  const averageGrade = req.body.evaluation.finalGrade;
   let counterUpdate = 0;
 
   //update answers within the eval
@@ -102,7 +117,9 @@ router.post("/updateevaluation", async (req, res, next) => {
     });
   });
   await updateAnswersPromise;
-
+  const updatedEvaluation = await Evaluation.findByIdAndUpdate(evalId,
+    { globalGrade: averageGrade }
+  );
   res.status(201).json(answerArray);
 });
 

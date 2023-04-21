@@ -5,6 +5,7 @@ const ObjectId = Schema.Types.ObjectId;
 const evaluationSchema = new Schema({
     userId: { type: ObjectId, ref: 'User' },
     answerList: [{ type: ObjectId, ref: 'Answer' }],
+    globalGrade : Number,
 }, { timestamps: true });
 
 const Evaluation = mongoose.model("Evaluation", evaluationSchema);
