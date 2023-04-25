@@ -88,7 +88,6 @@ router.get("/:id", requireAuth, checkId, (req, res, next) => {
 //delete one evaluation by id, teacher only
 router.post("/deleteevaluation", requireAuth, checkTeacher, (req, res, next) => {
   const id = req.body.id;
-  console.log("DDDDDDDDDDD////// ", id);
   Evaluation.deleteOne({ _id: id })
     .then((evaluation) => {
       res.status(200).json(evaluation);
