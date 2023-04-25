@@ -4,10 +4,11 @@ const Evaluation = require("../models/Evaluation");
 const Answer = require("../models/Answer");
 const User = require("../models/User");
 const checkTeacher = require("../middlewares/checkTeacher");
+const checkEvalExpiry = require("../middlewares/checkEvalExpiry");
 const requireAuth = require("../middlewares/requireAuth");
 const checkId = require("../middlewares/checkId");
 
-router.post("/newevaluation", async (req, res, next) => {
+router.post("/newevaluation", checkEvalExpiry, async (req, res, next) => {
   const answerArray = req.body.evalFormatted;
   const averageGrade = req.body.finalGrade;
   const answerListWithId = [];
@@ -34,14 +35,15 @@ router.post("/newevaluation", async (req, res, next) => {
   const newEvaluation = {
     answerList: answerListWithId,
     userId: req.session.currentUser._id,
-    globalGrade: averageGrade
+    globalGrade: averageGrade,
   };
   const createdEvaluation = await Evaluation.create(newEvaluation);
-  const updatedUser = await User.findByIdAndUpdate(req.session.currentUser._id,
+  const updatedUser = await User.findByIdAndUpdate(
+    req.session.currentUser._id,
     {
       currentEvaluation: {
-        isOpen: false
-      }
+        isOpen: false,
+      },
     }
   );
   res.status(201).json(createdEvaluation);
@@ -86,15 +88,19 @@ router.get("/:id", requireAuth, checkId, (req, res, next) => {
 });
 
 //delete one evaluation by id, teacher only
-router.post("/deleteevaluation", requireAuth, checkTeacher, (req, res, next) => {
-  const id = req.body.id;
-  Evaluation.deleteOne({ _id: id })
-    .then((evaluation) => {
-      res.status(200).json(evaluation);
-    })
-    .catch(next);
-});
-
+router.post(
+  "/deleteevaluation",
+  requireAuth,
+  checkTeacher,
+  (req, res, next) => {
+    const id = req.body.id;
+    Evaluation.deleteOne({ _id: id })
+      .then((evaluation) => {
+        res.status(200).json(evaluation);
+      })
+      .catch(next);
+  }
+);
 
 // Update an evaluation
 
@@ -123,9 +129,9 @@ router.post("/updateevaluation", async (req, res, next) => {
     });
   });
   await updateAnswersPromise;
-  const updatedEvaluation = await Evaluation.findByIdAndUpdate(evalId,
-    { globalGrade: averageGrade }
-  );
+  const updatedEvaluation = await Evaluation.findByIdAndUpdate(evalId, {
+    globalGrade: averageGrade,
+  });
   res.status(201).json(answerArray);
 });
 
