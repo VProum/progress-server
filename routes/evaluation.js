@@ -34,9 +34,16 @@ router.post("/newevaluation", async (req, res, next) => {
   const newEvaluation = {
     answerList: answerListWithId,
     userId: req.session.currentUser._id,
-    globalGrade : averageGrade
+    globalGrade: averageGrade
   };
   const createdEvaluation = await Evaluation.create(newEvaluation);
+  const updatedUser = await User.findByIdAndUpdate(req.session.currentUser._id,
+    {
+      currentEvaluation: {
+        isOpen: false
+      }
+    }
+  );
   res.status(201).json(createdEvaluation);
 });
 
