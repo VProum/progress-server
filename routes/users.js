@@ -24,8 +24,9 @@ router.get("/allusers", requireAuth, checkTeacher, (req, res, next) => {
 // Update open evaluations for a classe
 router.post("/opencloseeval", requireAuth, checkTeacher, async (req, res, next) => {
   const classeToUpdate = req.body.updatedClasse;
-  const isOpen = req.body.isOpen;
+  const isOpen = req.body.isOpenTemp;
   const titreEval = req.body.titreEval;
+  console.log(classeToUpdate, isOpen);
   const updatedUsers = await User.updateMany({ schoolClass: classeToUpdate }, {currentEvaluation: {
     isOpen: isOpen,
     evaluationTitle: titreEval
