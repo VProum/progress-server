@@ -7,6 +7,7 @@ const questionSchema = new Schema({
     capacites: {type: String, required: true },
     questions: String,
     isLive: Boolean,
+    displayOrder: { type: Number, required: true, unique: true },
 }, { timestamps: true });
 
 const Question = mongoose.model("Question", questionSchema);

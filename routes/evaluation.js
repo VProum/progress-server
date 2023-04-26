@@ -10,6 +10,7 @@ const checkId = require("../middlewares/checkId");
 router.post("/newevaluation", async (req, res, next) => {
   const answerArray = req.body.evalFormatted;
   const averageGrade = req.body.finalGrade;
+  const evalTitle = req.body.evalTitle;
   const answerListWithId = [];
 
   const createAnswersPromise = new Promise((res, rej) => {
@@ -34,7 +35,8 @@ router.post("/newevaluation", async (req, res, next) => {
   const newEvaluation = {
     answerList: answerListWithId,
     userId: req.session.currentUser._id,
-    globalGrade: averageGrade
+    globalGrade: averageGrade,
+    evalTitle: evalTitle
   };
   const createdEvaluation = await Evaluation.create(newEvaluation);
   const updatedUser = await User.findByIdAndUpdate(req.session.currentUser._id,
@@ -72,11 +74,24 @@ router.get("/allevaluations", checkTeacher, (req, res, next) => {
     .catch(next);
 });
 
+//fetch all eval for teacher with all details
+router.get("/allevaluationsfulldetails", checkTeacher, (req, res, next) => {
+  Evaluation.find()
+    .populate({
+      path: "userId answerList",
+      populate: { path: "questionId" },
+    })
+    .then((evaluations) => {
+      res.status(200).json(evaluations);
+    })
+    .catch(next);
+});
+
 //fetch one eval for one student
 router.get("/:id", requireAuth, checkId, (req, res, next) => {
   Evaluation.findById(req.params.id)
     .populate({
-      path: "answerList",
+      path: "userId answerList",
       populate: { path: "questionId" },
     })
     .then((evaluation) => {
