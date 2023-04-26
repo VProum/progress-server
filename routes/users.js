@@ -20,19 +20,31 @@ router.get("/allusers", requireAuth, checkTeacher, (req, res, next) => {
     .catch(next);
 });
 
-
 // Update open evaluations for a classe
-router.post("/opencloseeval", requireAuth, checkTeacher, async (req, res, next) => {
-  const classeToUpdate = req.body.updatedClasse;
-  const isOpen = req.body.isOpenTemp;
-  const titreEval = req.body.titreEval;
-  console.log(classeToUpdate, isOpen);
-  const updatedUsers = await User.updateMany({ schoolClass: classeToUpdate }, {currentEvaluation: {
-    isOpen: isOpen,
-    evaluationTitle: titreEval
+router.post(
+  "/opencloseeval",
+  requireAuth,
+  checkTeacher,
+  async (req, res, next) => {
+    try {
+      const classeToUpdate = req.body.updatedClasse;
+      const isOpen = req.body.isOpen;
+      const titreEval = req.body.titreEval;
+      const updatedUsers = await User.updateMany(
+        { schoolClass: classeToUpdate },
+        {
+          currentEvaluation: {
+            isOpen: isOpen,
+            evaluationTitle: titreEval,
+          },
+        }
+      );
+
+      res.status(201).json(updatedUsers);
+    } catch (error) {
+      next();
     }
-  });
-  res.status(201).json(updatedUsers);
-});
+  }
+);
 
 module.exports = router;
