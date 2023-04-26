@@ -24,6 +24,7 @@ router.post("/signin", (req, res, next) => {
       req.session.currentUser = {
         isTeacher: userDocument.isTeacher,
         _id: userDocument._id,
+        isOpen: userDocument.currentEvaluation.isOpen
       };
 
       res.redirect("/api/users/me");
@@ -61,6 +62,7 @@ router.post("/signup", (req, res, next) => {
           req.session.currentUser = {
             isTeacher: createdUser.isTeacher,
             _id: createdUser._id,
+            isOpen: false
           };
           res.redirect("/api/users/me");
         })
