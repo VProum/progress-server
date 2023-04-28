@@ -10,6 +10,10 @@ const MongoStore = require("connect-mongo");
 const cors = require("cors");
 
 const app = express();
+
+const agenda = require("./config/agenda");
+agenda.start();
+
 /**
  * Middlewares
  */
