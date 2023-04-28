@@ -8,6 +8,7 @@ const questionSchema = new Schema({
     questions: String,
     isLive: Boolean,
     displayOrder: { type: Number, required: true, unique: true },
+    color: String,
 }, { timestamps: true });
 
 const Question = mongoose.model("Question", questionSchema);
